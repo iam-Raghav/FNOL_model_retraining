@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FNOL Triage Model Evaluation Report</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+           max-width: 1100px; margin: 40px auto; padding: 0 20px; color: #212121; }
+    h1 { color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 8px; }
+    h2 { color: #283593; margin-top: 40px; }
+    h3 { color: #3949ab; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0 24px 0; }
+    th { background: #3949ab; color: white; padding: 8px 12px; text-align: left; }
+    td { padding: 7px 12px; border-bottom: 1px solid #e0e0e0; }
+    tr:hover { background: #f5f5f5; }
+    .summary-box { background: #e8eaf6; border-left: 4px solid #3949ab;
+                   padding: 16px 20px; margin: 20px 0; border-radius: 4px; }
+    .cost-box { background: #fff3e0; border-left: 4px solid #e65100;
+                padding: 16px 20px; margin: 20px 0; border-radius: 4px; }
+    .metric { display: inline-block; background: white; border: 1px solid #e0e0e0;
+               border-radius: 6px; padding: 12px 20px; margin: 8px; text-align: center; }
+    .metric-value { font-size: 28px; font-weight: bold; color: #1a237e; }
+    .metric-label { font-size: 12px; color: #757575; margin-top: 4px; }
+    img { max-width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 12px 0; }
+    .generated { color: #9e9e9e; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>FNOL Triage Model — Evaluation Report</h1>
+  <p class="generated">Generated: 2026-05-25 19:51 | Test set size: 82 records</p>
+
+  <h2>Executive Summary</h2>
+  <div class="summary-box"><strong>Routing accuracy is strong</strong> (weighted F1: 92%). In 9 out of 10 cases, the model sends claims to the right team. ⚠️ <strong>1 large loss claim(s) were incorrectly routed to automated settlement</strong>. This is a critical failure — human review must be enforced for all claims until this is resolved. The model detects reservation of rights language in 100% of cases where it is present, subrogation indicators in 100% of cases, and CAT event linkage in 67% of cases.</div>
+
+  <h2>Key Metrics</h2>
+  <div>
+    <div class="metric">
+      <div class="metric-value">91.8%</div>
+      <div class="metric-label">Routing F1 (weighted)</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">90.2%</div>
+      <div class="metric-label">Severity F1 (weighted)</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">2.70</div>
+      <div class="metric-label">Mean Routing Cost</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">1.90</div>
+      <div class="metric-label">Mean Severity Cost</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">1</div>
+      <div class="metric-label">C1→STP Errors (must be 0)</div>
+    </div>
+  </div>
+
+  <div class="cost-box">
+    <strong>Cost-weighted scoring note:</strong> Standard F1 treats all misclassifications equally.
+    The cost-weighted score reflects real business consequences — a C1 claim routed to STP
+    carries 100x the penalty of a C3 claim routed to LLU. A model with high F1 but poor
+    cost score is operationally dangerous despite appearing accurate by standard metrics.
+    <br><br>
+    Standard weighted F1 (routing): <strong>0.918</strong>
+    &nbsp;|&nbsp;
+    Mean cost score (routing): <strong>2.70</strong>
+    &nbsp;(lower is better; 0 = perfect)
+    <br>
+    Standard weighted F1 (severity): <strong>0.902</strong>
+    &nbsp;|&nbsp;
+    Mean cost score (severity): <strong>1.90</strong>
+    &nbsp;(lower is better; 0 = perfect)
+  </div>
+
+  <h2>Cost Matrices</h2>
+  <p>Asymmetric penalties — direction of the error matters. C1→STP (catastrophic auto-settlement
+     of a large-loss claim) is penalized 100× more than C3→LLU (minor operational waste).
+     Diagonal entries are 0 (correct prediction).</p>
+
+  <h3>Routing Cost Matrix</h3>
+  <table>
+    <tr><th>True ↓ / Pred →</th><th>LLU</th><th>LMU</th><th>STP</th><th>SIU</th></tr>
+    <tr><th style="text-align:left">LLU</th><td style="background:#e8f5e9;color:#2e7d32;font-weight:bold;text-align:center">0</td><td style="background:#fff3e0;color:#e65100;text-align:center">20</td><td style="background:#ffebee;color:#c62828;font-weight:bold;text-align:center">100</td><td style="color:#616161;text-align:center">15</td></tr><tr><th style="text-align:left">LMU</th><td style="color:#616161;text-align:center">5</td><td style="background:#e8f5e9;color:#2e7d32;font-weight:bold;text-align:center">0</td><td style="background:#fff3e0;color:#e65100;text-align:center">40</td><td style="color:#616161;text-align:center">10</td></tr><tr><th style="text-align:left">STP</th><td style="color:#616161;text-align:center">10</td><td style="color:#616161;text-align:center">8</td><td style="background:#e8f5e9;color:#2e7d32;font-weight:bold;text-align:center">0</td><td style="background:#fff3e0;color:#e65100;text-align:center">25</td></tr><tr><th style="text-align:left">SIU</th><td style="color:#616161;text-align:center">15</td><td style="color:#616161;text-align:center">10</td><td style="background:#ffebee;color:#c62828;font-weight:bold;text-align:center">80</td><td style="background:#e8f5e9;color:#2e7d32;font-weight:bold;text-align:center">0</td></tr>
+  </table>
+
+  <h3>Severity Cost Matrix</h3>
+  <table>
+    <tr><th>True ↓ / Pred →</th><th>C1</th><th>C2</th><th>C3</th></tr>
+    <tr><th style="text-align:left">C1</th><td style="background:#e8f5e9;color:#2e7d32;font-weight:bold;text-align:center">0</td><td style="background:#fff3e0;color:#e65100;text-align:center">30</td><td style="background:#ffebee;color:#c62828;font-weight:bold;text-align:center">75</td></tr><tr><th style="text-align:left">C2</th><td style="color:#616161;text-align:center">10</td><td style="background:#e8f5e9;color:#2e7d32;font-weight:bold;text-align:center">0</td><td style="background:#fff3e0;color:#e65100;text-align:center">20</td></tr><tr><th style="text-align:left">C3</th><td style="color:#616161;text-align:center">5</td><td style="color:#616161;text-align:center">3</td><td style="background:#e8f5e9;color:#2e7d32;font-weight:bold;text-align:center">0</td></tr>
+  </table>
+
+  <h2>Per-Dimension Classification Metrics</h2>
+  
+        <h3>Coverage Line</h3>
+        <table>
+          <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr>
+          
+            <tr>
+              <td>Commercial Auto</td>
+              <td>0.955</td>
+              <td>0.840</td>
+              <td>0.894</td>
+              <td>25</td>
+            </tr>
+            <tr>
+              <td>Commercial Property</td>
+              <td>0.833</td>
+              <td>0.800</td>
+              <td>0.816</td>
+              <td>25</td>
+            </tr>
+            <tr>
+              <td>General Liability</td>
+              <td>0.818</td>
+              <td>0.900</td>
+              <td>0.857</td>
+              <td>30</td>
+            </tr>
+            <tr>
+              <td>Multi-Line</td>
+              <td>0.333</td>
+              <td>0.500</td>
+              <td>0.400</td>
+              <td>2</td>
+            </tr>
+          <tr style="background:#e8f5e9;font-weight:bold">
+            <td>Macro Avg</td>
+            <td>0.735</td>
+            <td>0.760</td>
+            <td>0.742</td>
+            <td>—</td>
+          </tr>
+          <tr style="background:#e3f2fd;font-weight:bold">
+            <td>Weighted Avg</td>
+            <td>0.853</td>
+            <td>0.841</td>
+            <td>0.845</td>
+            <td>—</td>
+          </tr>
+        </table>
+        <h3>Cause Code</h3>
+        <table>
+          <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr>
+          
+            <tr>
+              <td>ADV-03</td>
+              <td>0.857</td>
+              <td>0.667</td>
+              <td>0.750</td>
+              <td>9</td>
+            </tr>
+            <tr>
+              <td>AUTO-02</td>
+              <td>0.857</td>
+              <td>1.000</td>
+              <td>0.923</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>AUTO-04</td>
+              <td>1.000</td>
+              <td>1.000</td>
+              <td>1.000</td>
+              <td>9</td>
+            </tr>
+            <tr>
+              <td>AUTO-07</td>
+              <td>0.833</td>
+              <td>0.833</td>
+              <td>0.833</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>AUTO-11</td>
+              <td>1.000</td>
+              <td>0.800</td>
+              <td>0.889</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>CAT-01</td>
+              <td>1.000</td>
+              <td>0.889</td>
+              <td>0.941</td>
+              <td>9</td>
+            </tr>
+            <tr>
+              <td>EQUIP-05</td>
+              <td>1.000</td>
+              <td>1.000</td>
+              <td>1.000</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>FIR-02</td>
+              <td>1.000</td>
+              <td>1.000</td>
+              <td>1.000</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>LIA-09</td>
+              <td>0.500</td>
+              <td>1.000</td>
+              <td>0.667</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>LIA-11</td>
+              <td>0.875</td>
+              <td>1.000</td>
+              <td>0.933</td>
+              <td>7</td>
+            </tr>
+            <tr>
+              <td>LIA-14</td>
+              <td>0.667</td>
+              <td>0.500</td>
+              <td>0.571</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>LIA-22</td>
+              <td>0.714</td>
+              <td>0.714</td>
+              <td>0.714</td>
+              <td>7</td>
+            </tr>
+            <tr>
+              <td>PROP-03</td>
+              <td>1.000</td>
+              <td>1.000</td>
+              <td>1.000</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>PROP-08</td>
+              <td>0.833</td>
+              <td>1.000</td>
+              <td>0.909</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>WTR-07</td>
+              <td>1.000</td>
+              <td>0.750</td>
+              <td>0.857</td>
+              <td>4</td>
+            </tr>
+          <tr style="background:#e8f5e9;font-weight:bold">
+            <td>Macro Avg</td>
+            <td>0.876</td>
+            <td>0.877</td>
+            <td>0.866</td>
+            <td>—</td>
+          </tr>
+          <tr style="background:#e3f2fd;font-weight:bold">
+            <td>Weighted Avg</td>
+            <td>0.882</td>
+            <td>0.866</td>
+            <td>0.866</td>
+            <td>—</td>
+          </tr>
+        </table>
+        <h3>Severity Tier</h3>
+        <table>
+          <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr>
+          
+            <tr>
+              <td>C1</td>
+              <td>0.714</td>
+              <td>0.833</td>
+              <td>0.769</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>C2</td>
+              <td>0.895</td>
+              <td>0.810</td>
+              <td>0.850</td>
+              <td>21</td>
+            </tr>
+            <tr>
+              <td>C3</td>
+              <td>0.929</td>
+              <td>0.945</td>
+              <td>0.937</td>
+              <td>55</td>
+            </tr>
+          <tr style="background:#e8f5e9;font-weight:bold">
+            <td>Macro Avg</td>
+            <td>0.846</td>
+            <td>0.863</td>
+            <td>0.852</td>
+            <td>—</td>
+          </tr>
+          <tr style="background:#e3f2fd;font-weight:bold">
+            <td>Weighted Avg</td>
+            <td>0.904</td>
+            <td>0.902</td>
+            <td>0.902</td>
+            <td>—</td>
+          </tr>
+        </table>
+        <h3>Routing</h3>
+        <table>
+          <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr>
+          
+            <tr>
+              <td>LLU</td>
+              <td>0.800</td>
+              <td>0.667</td>
+              <td>0.727</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>LMU</td>
+              <td>0.875</td>
+              <td>1.000</td>
+              <td>0.933</td>
+              <td>21</td>
+            </tr>
+            <tr>
+              <td>STP</td>
+              <td>0.980</td>
+              <td>0.891</td>
+              <td>0.933</td>
+              <td>55</td>
+            </tr>
+            <tr>
+              <td>micro avg</td>
+              <td>0.937</td>
+              <td>0.902</td>
+              <td>0.919</td>
+              <td>82</td>
+            </tr>
+          <tr style="background:#e8f5e9;font-weight:bold">
+            <td>Macro Avg</td>
+            <td>0.885</td>
+            <td>0.853</td>
+            <td>0.865</td>
+            <td>—</td>
+          </tr>
+          <tr style="background:#e3f2fd;font-weight:bold">
+            <td>Weighted Avg</td>
+            <td>0.940</td>
+            <td>0.902</td>
+            <td>0.918</td>
+            <td>—</td>
+          </tr>
+        </table>
+
+  <h2>Domain Signal Detection Report</h2>
+  <p>These are the five failure modes called out in the system specification.
+     Recall is the most important metric here — a missed signal means the model
+     failed to route a claim correctly.</p>
+  <table>
+    <tr>
+      <th>Signal</th><th>Support (test)</th>
+      <th>Precision</th><th>Recall ⭐</th><th>F1</th><th>Detected / Total</th>
+    </tr>
+    
+        <tr>
+          <td>Reservation Of Rights</td>
+          <td>7</td>
+          <td>0.875</td>
+          <td style="color:#2e7d32;font-weight:bold">1.000</td>
+          <td>0.933</td>
+          <td>7 / 7</td>
+        </tr>
+        <tr>
+          <td>Subrogation Indicator</td>
+          <td>1</td>
+          <td>0.500</td>
+          <td style="color:#2e7d32;font-weight:bold">1.000</td>
+          <td>0.667</td>
+          <td>1 / 1</td>
+        </tr>
+        <tr>
+          <td>Cat Event</td>
+          <td>6</td>
+          <td>1.000</td>
+          <td style="color:#f57c00;font-weight:bold">0.667</td>
+          <td>0.800</td>
+          <td>4 / 6</td>
+        </tr>
+        <tr>
+          <td>Occurrence Claims Made Ambiguity</td>
+          <td>1</td>
+          <td>0.000</td>
+          <td style="color:#c62828;font-weight:bold">0.000</td>
+          <td>0.000</td>
+          <td>0 / 1</td>
+        </tr>
+        <tr>
+          <td>Named Additional Insured Confusion</td>
+          <td>2</td>
+          <td>1.000</td>
+          <td style="color:#f57c00;font-weight:bold">0.500</td>
+          <td>0.667</td>
+          <td>1 / 2</td>
+        </tr>
+  </table>
+
+  <h2>Confusion Matrices</h2>
+  <img src="charts\cm_routing.png" alt="routing confusion matrix"><img src="charts\cm_severity_tier.png" alt="severity_tier confusion matrix"><img src="charts\cm_coverage_line.png" alt="coverage_line confusion matrix">
+
+</body>
+</html>

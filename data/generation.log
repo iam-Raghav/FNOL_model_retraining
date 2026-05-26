@@ -1,0 +1,77 @@
+Building scenario list for 550 records...
+
+Distribution plan:
+  C1: 44 (8.0%)
+  C2: 137 (24.9%)
+  C3: 369 (67.1%)
+  reservation_of_rights: 32 (min 32)
+  subrogation_indicator: 27 (min 27)
+  cat_event: 42 (min 42)
+  multi_line: 0 (min 22)
+
+Generating 550 narratives → /home/ragavendrenramani/My_team_LLM/Loss_runs/kishore_ask/fine_tuning/fnol-triage-finetune/data/generated_dataset.jsonl
+This will take ~10–20 minutes on Claude API...
+
+  [10/550] Generated — sev=C2 cov=Commercial A
+  [20/550] Generated — sev=C2 cov=General Liab
+  [30/550] Generated — sev=C1 cov=Commercial P
+  [40/550] Generated — sev=C3 cov=General Liab
+  [50/550] Generated — sev=C3 cov=Commercial A
+  [60/550] Generated — sev=C3 cov=Commercial P
+  [70/550] Generated — sev=C3 cov=General Liab
+  [80/550] Generated — sev=C3 cov=Commercial A
+  [90/550] Generated — sev=C2 cov=General Liab
+  [100/550] Generated — sev=C3 cov=Commercial P
+  [110/550] Generated — sev=C3 cov=Commercial P
+  [120/550] Generated — sev=C3 cov=General Liab
+  [130/550] Generated — sev=C3 cov=Commercial P
+  [140/550] Generated — sev=C3 cov=General Liab
+  [150/550] Generated — sev=C3 cov=Commercial P
+  [160/550] Generated — sev=C3 cov=General Liab
+  [170/550] Generated — sev=C2 cov=Commercial A
+  [180/550] Generated — sev=C1 cov=General Liab
+  [190/550] Generated — sev=C2 cov=Commercial P
+  [200/550] Generated — sev=C2 cov=General Liab
+  [210/550] Generated — sev=C3 cov=General Liab
+  [220/550] Generated — sev=C3 cov=General Liab
+  [230/550] Generated — sev=C2 cov=Commercial A
+  [240/550] Generated — sev=C2 cov=Commercial P
+  [250/550] Generated — sev=C2 cov=General Liab
+  [260/550] Generated — sev=C3 cov=General Liab
+  [270/550] Generated — sev=C3 cov=Commercial P
+  [280/550] Generated — sev=C3 cov=General Liab
+  [290/550] Generated — sev=C3 cov=Commercial P
+  [300/550] Generated — sev=C3 cov=General Liab
+  [310/550] Generated — sev=C3 cov=Commercial P
+  [320/550] Generated — sev=C3 cov=General Liab
+  [330/550] Generated — sev=C3 cov=Commercial P
+  [340/550] Generated — sev=C3 cov=Commercial P
+  [350/550] Generated — sev=C3 cov=General Liab
+  [360/550] Generated — sev=C3 cov=General Liab
+  [370/550] Generated — sev=C3 cov=Commercial P
+  [380/550] Generated — sev=C3 cov=General Liab
+  [390/550] Generated — sev=C1 cov=Commercial P
+  [400/550] Generated — sev=C3 cov=General Liab
+  [410/550] Generated — sev=C3 cov=General Liab
+  [420/550] Generated — sev=C2 cov=General Liab
+  [430/550] Generated — sev=C3 cov=General Liab
+  [440/550] Generated — sev=C3 cov=General Liab
+  [450/550] Generated — sev=C3 cov=Commercial A
+  [460/550] Generated — sev=C3 cov=General Liab
+  [470/550] Generated — sev=C3 cov=Commercial A
+  [480/550] Generated — sev=C3 cov=Commercial P
+  [490/550] Generated — sev=C3 cov=General Liab
+  [500/550] Generated — sev=C1 cov=Commercial P
+  [510/550] Generated — sev=C3 cov=Commercial P
+  [520/550] Generated — sev=C1 cov=Commercial P
+  [530/550] Generated — sev=C2 cov=Multi-Line
+  [540/550] Generated — sev=C3 cov=Commercial P
+  [550/550] Generated — sev=C3 cov=Multi-Line
+
+Done. 550 records written to /home/ragavendrenramani/My_team_LLM/Loss_runs/kishore_ask/fine_tuning/fnol-triage-finetune/data/generated_dataset.jsonl
+
+Validation:
+  Total records: 550
+  coverage_line: {'General Liability': 165, 'Commercial Property': 213, 'Commercial Auto': 150, 'Multi-Line': 22}
+  severity_tier: {'C3': 369, 'C2': 137, 'C1': 44}
+  routing: {'STP': 369, 'LMU': 137, 'LLU': 44}

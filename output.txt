@@ -1,0 +1,18 @@
+============================================================
+EVALUATION SUMMARY
+============================================================
+  coverage_line        weighted_f1=0.945  macro_f1=0.727
+  cause_code           weighted_f1=0.256  macro_f1=0.244
+  severity_tier        weighted_f1=0.976  macro_f1=0.955
+  routing              weighted_f1=0.976  macro_f1=0.955
+
+  Routing cost score:  0.16
+  Severity cost score: 0.16
+  C1→STP errors:       0 (MUST BE 0)
+
+Domain signals:
+  reservation_of_rights                    P=0.60  R=0.86
+  subrogation_indicator                    P=0.00  R=0.00
+  cat_event                                P=1.00  R=1.00
+  occurrence_claims_made_ambiguity         P=0.00  R=0.00
+  named_additional_insured_confusion       P=0.00  R=0.00

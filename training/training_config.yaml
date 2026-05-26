@@ -1,0 +1,48 @@
+# training_config.yaml
+# All non-default hyperparameters documented with rationale.
+# This file is reference documentation — finetune.py reads args, not this file.
+# A future refactor can load this via Hydra or simple yaml.load().
+
+model:
+  base_model: "mistralai/Mistral-7B-Instruct-v0.2"
+  # Mistral chosen over LLaMA-3-8B: better instruction following on
+  # structured output tasks, smaller vocabulary overhead, Apache 2.0 license.
+  # Phi-3 considered but 3.8B parameter count may underfit on 5 domain signals.
+
+quantization:
+  load_in_4bit: true
+  quant_type: "nf4"          # NF4 outperforms INT4 for normally-distributed weights
+  double_quant: true         # saves ~0.5GB, minimal quality impact
+  compute_dtype: "bfloat16"  # more stable than float16 for forward pass
+
+lora:
+  r: 16                      # rank 16: more headroom than r=8 for 5-class structured output
+  alpha: 32                  # alpha/r = 2 is empirically optimal scaling
+  dropout: 0.05              # light regularization for small dataset (385 train)
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+  # Including k_proj and o_proj beyond the minimal {q,v} pair improves
+  # structured JSON output fidelity — tested on similar classification tasks.
+
+training:
+  epochs: 3
+  per_device_train_batch_size: 4   # T4 16GB limit with max_seq_len=1024
+  gradient_accumulation_steps: 4   # effective batch = 16
+  learning_rate: 2.0e-4            # standard LoRA LR; full FT uses 1e-5
+  warmup_ratio: 0.05               # 5% warmup, prevents gradient spike on small data
+  weight_decay: 0.01
+  max_seq_length: 1024             # prompt+output fits in 1024; longer wastes VRAM
+  fp16: true
+
+evaluation:
+  eval_strategy: "steps"
+  eval_steps: 25
+  early_stopping_patience: 3      # stop if val loss stagnates for 75 steps (~0.75 epochs)
+  metric_for_best_model: "eval_loss"
+
+output:
+  adapter_dir: "adapters/final"
+  save_base_separately: true      # base model weights never modified

@@ -1,0 +1,36 @@
+# requirements.txt — pinned for reproducibility
+# Python 3.10+ required
+# GPU: T4 (16GB) minimum for training. CPU-only works for inference at reduced speed.
+
+# Core ML stack
+# transformers >= 4.43 is required for Llama-3.1 RoPE scaling (rope_scaling type="llama3").
+# Earlier versions will load the model but produce degraded long-context behavior.
+torch==2.3.1
+transformers==4.44.2
+peft==0.12.0
+trl==0.9.6
+bitsandbytes==0.43.3
+accelerate==0.33.0
+datasets==2.20.0
+
+# Data generation
+anthropic==0.28.0
+
+# API
+fastapi==0.111.0
+uvicorn==0.30.0
+pydantic==2.7.1
+
+# Demo UI
+streamlit==1.35.0
+
+# Evaluation
+scikit-learn==1.5.0
+seaborn==0.13.2
+matplotlib==3.9.0
+numpy==1.26.4
+
+# Utilities
+requests==2.32.2
+tqdm==4.66.4
+pyyaml==6.0.1
