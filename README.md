@@ -224,6 +224,6 @@ Documented honestly in [docs/known_failures.md](docs/known_failures.md). The big
 
 ## License & data
 
-Code: internal use, Intellect Design Arena.
+Code: Public use
 Dataset: synthetic, no real PII. The pipeline assumes a Presidio redaction stage in front of any real FNOL ingest — see [docs/data_card.md](data/data_card.md) for the production-PII architecture note.
 Base model: Meta Llama 3.1 Community License (accept on the HF model page before use).
