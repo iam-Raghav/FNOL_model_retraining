@@ -4,7 +4,7 @@
 # A future refactor can load this via Hydra or simple yaml.load().
 
 model:
-  base_model: "mistralai/Mistral-7B-Instruct-v0.2"
+  base_model: "meta-llama/Meta-Llama-3.1-8B-Instruct"
   # Mistral chosen over LLaMA-3-8B: better instruction following on
   # structured output tasks, smaller vocabulary overhead, Apache 2.0 license.
   # Phi-3 considered but 3.8B parameter count may underfit on 5 domain signals.
